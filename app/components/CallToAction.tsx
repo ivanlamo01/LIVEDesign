@@ -1,3 +1,4 @@
+"use client"
 import { ArrowRight } from "lucide-react";
 
 export default function CTA() {
@@ -17,9 +18,9 @@ export default function CTA() {
             </p>
             
             <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <a href="#" className="rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-slate-900 shadow-sm hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white transition-all">
+              <button onClick={() => window.dispatchEvent(new Event('start-contact-flow'))} className="cursor-pointer rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-slate-900 shadow-sm hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white transition-all">
                 Reservar Consultoría
-              </a>
+              </button>
               <a href="#" className="text-sm font-semibold leading-6 text-white flex items-center justify-center gap-1 hover:text-blue-300 transition-colors group">
                 Ver planes de precios <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1"/>
               </a>

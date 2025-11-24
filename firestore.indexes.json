@@ -1,0 +1,81 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "Productos",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "Barcode",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "category_normalized",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "__name__",
+          "order": "ASCENDING"
+        }
+      ],
+      "density": "SPARSE_ALL"
+    },
+    {
+      "collectionGroup": "Productos",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "Barcode",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "title_normalized",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "__name__",
+          "order": "ASCENDING"
+        }
+      ],
+      "density": "SPARSE_ALL"
+    },
+    {
+      "collectionGroup": "Productos",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "category_normalized",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "title_normalized",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "__name__",
+          "order": "ASCENDING"
+        }
+      ],
+      "density": "SPARSE_ALL"
+    },
+    {
+      "collectionGroup": "sales",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "userId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "timestamp",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "__name__",
+          "order": "ASCENDING"
+        }
+      ],
+      "density": "SPARSE_ALL"
+    }
+  ],
+  "fieldOverrides": []
+}

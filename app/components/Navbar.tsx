@@ -1,40 +1,385 @@
-import Link from 'next/link';
+"use client";
+
+import Link from "next/link";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 
 export default function Navbar() {
+  const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 10);
+    onScroll();
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const toggleMenu = () => setOpen((prev) => !prev);
+  const closeMenu = () => setOpen(false);
+
   return (
-    <nav className="fixed w-full z-50 top-0 start-0 border-b border-white/10 bg-gradient-to-br from-slate-950/90 via-purple-950/90 to-blue-950/90 backdrop-blur-md transition-all duration-300">
-      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-        
-        {/* Logo */}
-        <Link href="/" className="flex items-center space-x-3 rtl:space-x-reverse group">
-            <span className="self-center text-2xl font-bold whitespace-nowrap text-white">
-              LIVE <span className="bg-clip-text text-transparent bg-linear-to-r from-blue-400 to-purple-400">Design</span>
-            </span>
-        </Link>
+    <>
+      {/* BARRA SUPERIOR SIEMPRE VISIBLE */}
+      <motion.nav
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ type: "spring", stiffness: 100, damping: 20 }}
+        className={`fixed top-0 left-0 z-1000 w-full transition-all duration-700 overflow-hidden ${scrolled || open
+          ? "backdrop-blur-xl bg-black/30"
+          : "bg-transparent backdrop-blur-none"
+          }`}
+      >
+        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
 
-        {/* Botón CTA con efecto Glow */}
-        <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-            <a href="#cta" className="text-white bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 focus:ring-4 focus:outline-none focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center shadow-lg shadow-blue-500/30 transition-all hover:scale-105">
-              Agendar Consultoría
-            </a>
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2, type: "spring", stiffness: 120 }}
+          >
+            <Link
+              href="/"
+              className={`flex items-center space-x-2 group transition-all duration-500 ${open ? "opacity-0 pointer-events-none scale-90" : "opacity-100 scale-100"
+                }`}
+              onClick={closeMenu}
+              aria-hidden={open}
+            >
+              <motion.div
+                whileHover={{ scale: 1.05, rotate: 5 }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ type: "spring", stiffness: 400, damping: 17 }}
+              >
+                <Image
+                  src="/logo.png"
+                  alt="LIVE Design logo"
+                  width={100}
+                  height={100}
+                  priority
+                  className="drop-shadow-[0_0_15px_rgba(59,130,246,0.3)] group-hover:drop-shadow-[0_0_25px_rgba(59,130,246,0.5)] transition-all duration-300"
+                />
+              </motion.div>
+
+              <span className="text-slate-100 font-semibold text-sm md:text-base tracking-[0.25em] uppercase group-hover:text-blue-300 transition-colors duration-300">
+                Design
+              </span>
+            </Link>
+          </motion.div>
+
+          {/* Desktop Navigation */}
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className={`hidden md:flex items-center gap-8 ${open ? "opacity-0 pointer-events-none" : "opacity-100"}`}
+          >
+            {[
+              { href: "/", label: "Inicio" },
+              { href: "/services", label: "Servicios" },
+              { href: "/portfolio", label: "Portafolio" },
+            ].map((link) => (
+              <Link
+                key={link.label}
+                href={link.href}
+                className="relative group py-1"
+              >
+                <span className="text-sm font-medium text-slate-300 group-hover:text-white transition-colors duration-300 tracking-wider uppercase">
+                  {link.label}
+                </span>
+                <motion.span
+                  initial={{ scaleX: 0 }}
+                  whileHover={{ scaleX: 1 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                  className="absolute -bottom-0.5 left-0 w-full h-0.5 bg-gradient-to-r from-blue-400 to-purple-400 origin-left"
+                />
+              </Link>
+            ))}
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.3, type: "spring", stiffness: 120 }}
+            className="flex items-center gap-3"
+          >
+            {!open ? (
+              
+              <motion.a
+                onClick={() => window.dispatchEvent(new Event('start-contact-flow'))}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                className="hidden border border-blue-500/30 sm:inline-flex relative items-center gap-2 px-5 py-2 text-xs font-semibold rounded-full text-white hover:bg-blue-500/10 hover:border-blue-400/50 transition-all duration-300 shadow-lg shadow-blue-900/20"
+              >
+                <span>Agendar Consultoría</span>
+                <motion.span
+                  animate={{ x: [0, 3, 0] }}
+                  transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+                  className="text-[0.65rem] opacity-80"
+                >
+                  ↗
+                </motion.span>
+
+              </motion.a>
+            ) : null}
+
+            <motion.button
+              onClick={toggleMenu}
+              aria-label={open ? "Cerrar menú" : "Abrir menú"}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              className="relative flex h-10 w-10 items-center justify-center group md:hidden"
+            >
+              <motion.span
+                animate={{
+                  scale: open ? 1.2 : 1,
+                  opacity: open ? 0.2 : 0.1,
+                }}
+                transition={{ duration: 0.3 }}
+                className="absolute inset-0 rounded-full bg-blue-500/10 group-hover:bg-blue-500/20 transition-colors duration-300"
+              />
+
+              {/* Línea superior */}
+              <motion.span
+                animate={{
+                  rotate: open ? 45 : 0,
+                  y: open ? 0 : -10,
+                  scaleX: open ? 1 : 1,
+                }}
+                transition={{ type: "spring", stiffness: 260, damping: 20 }}
+                className="block absolute h-0.5 w-6 bg-slate-100 origin-center"
+              />
+
+              {/* Línea media */}
+              <motion.span
+                animate={{
+                  width: open ? 0 : 16,
+                  opacity: open ? 0 : 1,
+                }}
+                transition={{ duration: 0.2 }}
+                className="block absolute h-0.5 bg-slate-100"
+              />
+
+              {/* Línea inferior */}
+              <motion.span
+                animate={{
+                  rotate: open ? -45 : 0,
+                  y: open ? 0 : 10,
+                  scaleX: open ? 1 : 1,
+                }}
+                transition={{ type: "spring", stiffness: 260, damping: 20 }}
+                className="block absolute h-0.5 w-6 bg-slate-100 origin-center"
+              />
+            </motion.button>
+          </motion.div>
         </div>
+      </motion.nav>
 
-        {/* Menú de Navegación */}
-        <div className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-sticky">
-          <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-transparent">
-            <li>
-              <Link href="#" className="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-400 md:p-0" aria-current="page">Inicio</Link>
-            </li>
-            <li>
-              <Link href="#servicios" className="block py-2 px-3 text-gray-300 rounded hover:bg-gray-700 md:hover:bg-transparent md:hover:text-white md:p-0 transition-colors duration-200">Servicios</Link>
-            </li>
-            <li>
-              <Link href="#proyectos" className="block py-2 px-3 text-gray-300 rounded hover:bg-gray-700 md:hover:bg-transparent md:hover:text-white md:p-0 transition-colors duration-200">Portafolio</Link>
-            </li>
-          </ul>
-        </div>
+      {/* OVERLAY FULLSCREEN (DESKTOP + MOBILE) */}
+      <AnimatePresence mode="wait">
+        {open && (
+          <motion.div
+            key="nav-overlay"
+            initial={{ clipPath: "circle(0% at 95% 5%)", opacity: 0 }}
+            animate={{ clipPath: "circle(150% at 95% 5%)", opacity: 1 }}
+            exit={{ clipPath: "circle(0% at 95% 5%)", opacity: 0 }}
+            transition={{
+              type: "spring",
+              stiffness: 80,
+              damping: 20,
+              opacity: { duration: 0.3 }
+            }}
+            className="fixed inset-0 z-900"
+          >
+            {/* Fondo */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.4 }}
+              className="absolute inset-0 bg-black/80 backdrop-blur-3xl"
+            >
+              {/* Orbes animados */}
+              <motion.div
+                animate={{
+                  scale: [1, 1.2, 1],
+                  x: [0, 30, 0],
+                  y: [0, -20, 0],
+                }}
+                transition={{
+                  repeat: Infinity,
+                  duration: 8,
+                  ease: "easeInOut",
+                }}
+                className="pointer-events-none absolute -top-32 -left-24 h-60 w-60 rounded-full bg-purple-600/30 blur-3xl"
+              />
+              <motion.div
+                animate={{
+                  scale: [1, 1.3, 1],
+                  x: [0, -40, 0],
+                  y: [0, 30, 0],
+                }}
+                transition={{
+                  repeat: Infinity,
+                  duration: 10,
+                  ease: "easeInOut",
+                  delay: 1,
+                }}
+                className="pointer-events-none absolute -bottom-40 -right-28 h-72 w-72 rounded-full bg-cyan-500/30 blur-3xl"
+              />
+              <motion.div
+                animate={{
+                  scale: [1, 1.1, 1],
+                  x: [0, 20, 0],
+                  y: [0, -30, 0],
+                }}
+                transition={{
+                  repeat: Infinity,
+                  duration: 7,
+                  ease: "easeInOut",
+                  delay: 0.5,
+                }}
+                className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-96 w-96 rounded-full bg-blue-500/20 blur-3xl"
+              />
+            </motion.div>
 
-      </div>
-    </nav>
+            {/* Contenido menú */}
+            <div className="relative z-10 flex h-full flex-col items-center justify-center gap-10 px-8">
+              <motion.span
+                initial={{ opacity: 0, letterSpacing: "0.1em" }}
+                animate={{ opacity: 1, letterSpacing: "0.3em" }}
+                transition={{ delay: 0.3, duration: 0.5 }}
+                className="text-xs tracking-[0.3em] uppercase text-slate-300/80"
+              >
+                Explora
+              </motion.span>
+
+              <motion.div
+                initial={{ scale: 0, rotate: -180 }}
+                animate={{ scale: 1, rotate: 0 }}
+                exit={{ scale: 0, rotate: 180 }}
+                transition={{
+                  type: "spring",
+                  stiffness: 200,
+                  damping: 20,
+                  delay: 0.1
+                }}
+                className="w-60"
+              >
+                <Image
+                  src="/logo.png"
+                  alt=""
+                  width={200}
+                  height={200}
+                  className="drop-shadow-[0_0_30px_rgba(59,130,246,0.6)]"
+                />
+              </motion.div>
+
+              {/* Branding & subtítulo */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.8, y: -20 }}
+                transition={{
+                  type: "spring",
+                  stiffness: 150,
+                  damping: 15,
+                  delay: 0.15
+                }}
+                className="flex flex-col items-center gap-3"
+              >
+              </motion.div>
+
+              {/* Links */}
+              <motion.ul
+                initial="hidden"
+                animate="visible"
+                exit="hidden"
+                variants={{
+                  hidden: { opacity: 0 },
+                  visible: {
+                    opacity: 1,
+                    transition: {
+                      staggerChildren: 0.1,
+                      delayChildren: 0.25,
+                      staggerDirection: 1
+                    },
+                  },
+                }}
+                className="flex flex-col items-center gap-6 text-center text-lg md:text-2xl font-medium"
+              >
+                {[
+                  { href: "#", label: "Inicio" },
+                  { href: "/services", label: "Servicios" },
+                  { href: "/portfolio", label: "Portafolio" },
+                ].map((item) => (
+                  <motion.li
+                    key={item.href}
+                    variants={{
+                      hidden: { opacity: 0, x: -30, scale: 0.8 },
+                      visible: {
+                        opacity: 1,
+                        x: 0,
+                        scale: 1,
+                        transition: {
+                          type: "spring",
+                          stiffness: 200,
+                          damping: 15
+                        }
+                      },
+                    }}
+                  >
+                    <Link
+                      href={item.href}
+                      onClick={closeMenu}
+                      className="relative inline-flex items-center justify-center px-5 py-1 group"
+                    >
+                      <motion.span
+                        whileHover={{ scale: 1.1, letterSpacing: "0.35em" }}
+                        transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                        className="tracking-[0.3em] uppercase text-slate-100 text-sm md:text-base transition-all duration-300 group-hover:text-cyan-300"
+                      >
+                        {item.label}
+                      </motion.span>
+                      <motion.span
+                        initial={{ width: 0 }}
+                        whileHover={{ width: 96 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                        className="absolute -bottom-2 left-1/2 h-0.5 -translate-x-1/2 bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 shadow-[0_0_10px_rgba(56,189,248,0.8)]"
+                      />
+                    </Link>
+                  </motion.li>
+                ))}
+              </motion.ul>
+
+              {/* CTA grande en el overlay */}
+              <motion.div
+                initial={{ opacity: 0, y: 30, scale: 0.8 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -20, scale: 0.8 }}
+                transition={{
+                  type: "spring",
+                  stiffness: 150,
+                  damping: 15,
+                  delay: 0.4
+                }}
+                className="mt-4"
+              >
+                <motion.a
+                  href="#cta"
+                  onClick={closeMenu}
+                  whileHover={{ scale: 1.08, y: -3 }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                  className="relative border border-blue-500/40 inline-flex items-center gap-2 px-7 py-2.5 text-sm md:text-base font-semibold rounded-full text-white shadow-lg shadow-blue-500/40 hover:shadow-[0_0_40px_rgba(59,130,246,0.9)] transition-shadow duration-300"
+                >
+                  <span>Agendar Consultoría</span>
+                </motion.a>
+              </motion.div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
