@@ -3,6 +3,7 @@
 import { Github, Linkedin, Twitter, Mail, ArrowRight, Check, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { subscribeToNewsletter } from "../lib/actions";
+import Link from "next/link";
 
 export default function Footer() {
   const [email, setEmail] = useState("");
@@ -41,12 +42,9 @@ export default function Footer() {
 
           {/* Columna 1: Marca */}
           <div className="space-y-6">
-            <a href="/" className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600" />
-              <span className="text-2xl font-bold text-slate-100">
-                LIVE <span className="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">Design</span>
-              </span>
-            </a>
+            <Link href="/" className="flex items-center gap-2">
+              <img src="/logo.png" className="w-60" alt="" />
+            </Link>
             <p className="text-sm leading-relaxed text-slate-400">
               Transformamos ideas complejas en experiencias digitales excepcionales. Desarrollo web, automatización e IA para el futuro de tu negocio.
             </p>
@@ -58,9 +56,9 @@ export default function Footer() {
           </div>
 
           {/* Columna 2: Servicios */}
-          <div>
+          <div className="mt-16">
             <h3 className="mb-6 text-sm font-bold uppercase tracking-wider text-slate-100">Servicios</h3>
-            <ul className="space-y-4">
+            <ul className="space-y-6">
               <FooterLink href="/services#web">Desarrollo Web</FooterLink>
               <FooterLink href="/services#automation-ia">Agentes de IA</FooterLink>
               <FooterLink href="/services#design">Diseño UX/UI</FooterLink>
@@ -69,19 +67,18 @@ export default function Footer() {
           </div>
 
           {/* Columna 3: Compañía */}
-          <div>
+          <div className="mt-16">
             <h3 className="mb-6 text-sm font-bold uppercase tracking-wider text-slate-100">Compañía</h3>
-            <ul className="space-y-4">
-              <FooterLink href="/about">Sobre Nosotros</FooterLink>
+            <ul className="space-y-6">
+              <FooterLink href="#nosotros">Sobre Nosotros</FooterLink>
               <FooterLink href="/portfolio">Portafolio</FooterLink>
               <FooterLink href="/blog">Blog</FooterLink>
-              <FooterLink href="/careers">Carreras</FooterLink>
               <FooterLink href="/contact">Contacto</FooterLink>
             </ul>
           </div>
 
           {/* Columna 4: Newsletter */}
-          <div>
+          <div className="mt-16">
             <h3 className="mb-6 text-sm font-bold uppercase tracking-wider text-slate-100">Newsletter</h3>
             <p className="mb-4 text-sm text-slate-400">
               Suscríbete para recibir las últimas novedades en tecnología y diseño.
@@ -102,8 +99,8 @@ export default function Footer() {
                 type="submit"
                 disabled={status === 'loading' || status === 'success'}
                 className={`group flex w-full items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-semibold text-white transition-all active:scale-95 ${status === 'success'
-                    ? 'bg-emerald-600 hover:bg-emerald-500'
-                    : 'bg-indigo-600 hover:bg-indigo-500'
+                  ? 'bg-emerald-600 hover:bg-emerald-500'
+                  : 'bg-indigo-600 hover:bg-indigo-500'
                   } disabled:opacity-70 disabled:cursor-not-allowed`}
               >
                 {status === 'loading' ? (
@@ -135,7 +132,7 @@ export default function Footer() {
         <div className="mt-16 border-t border-slate-800 pt-8">
           <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
             <p className="text-sm text-slate-500">
-              © 2024 LIVE Design™. Todos los derechos reservados.
+              © 2025 LIVE Design™. Todos los derechos reservados.
             </p>
             <div className="flex gap-6 text-sm text-slate-500">
               <a href="#" className="hover:text-indigo-400 transition-colors">Privacidad</a>

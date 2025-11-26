@@ -291,13 +291,13 @@ export default function PortfolioPage() {
                         Ya sea una idea disruptiva o una mejora necesaria, tenemos la tecnología y la experiencia para hacerlo realidad.
                     </p>
                     <div className="flex justify-center">
-                        <Link
-                            href="/#contacto"
+                        <button
+                            onClick={() => window.dispatchEvent(new Event('start-consultation-flow'))}
                             className="inline-flex items-center gap-2 bg-white text-slate-950 px-8 py-4 rounded-full font-bold hover:bg-indigo-50 transition-all hover:scale-105 shadow-xl shadow-white/10"
                         >
                             Iniciar Proyecto
                             <ArrowRight className="w-5 h-5" />
-                        </Link>
+                        </button>
                     </div>
                 </div>
             </section>

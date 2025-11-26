@@ -17,14 +17,7 @@ export default function Chatbot() {
     const [isOpen, setIsOpen] = useState(false);
     const [inputText, setInputText] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const [messages, setMessages] = useState<Message[]>([
-        {
-            id: "1",
-            text: "¡Hola! Soy el asistente virtual de LIVE Design. ¿En qué puedo ayudarte hoy?",
-            sender: "bot",
-            timestamp: new Date(),
-        },
-    ]);
+    const [messages, setMessages] = useState<Message[]>([]);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     // State to track conversation flow
@@ -49,6 +42,8 @@ export default function Chatbot() {
         contactInfo: ""
     });
     const [contactDocId, setContactDocId] = useState<string | null>(null);
+    const [hasShownProactive, setHasShownProactive] = useState(false);
+    const [showNotificationBadge, setShowNotificationBadge] = useState(false);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -57,6 +52,40 @@ export default function Chatbot() {
     useEffect(() => {
         scrollToBottom();
     }, [messages, isOpen, isLoading]);
+
+    // Proactive notification timer
+    useEffect(() => {
+        // Set timer for proactive notification (20 seconds)
+        const timer = setTimeout(() => {
+            if (!isOpen && !hasShownProactive) {
+                setShowNotificationBadge(true);
+                const proactiveMessage: Message = {
+                    id: Date.now().toString(),
+                    text: "👋 Hola soy Liv, tu asistente virtual ¿en qué te ayudo?",
+                    sender: "bot",
+                    timestamp: new Date(),
+                };
+                setMessages(prev => [...prev, proactiveMessage]);
+                setHasShownProactive(true);
+            }
+        }, 20000);
+
+        return () => clearTimeout(timer);
+    }, [isOpen, hasShownProactive]);
+
+    // Add Liv greeting when chat is opened if not already shown
+    useEffect(() => {
+        if (isOpen && !hasShownProactive && messages.length === 0) {
+            const livGreeting: Message = {
+                id: Date.now().toString(),
+                text: "👋 Hola soy Liv, tu asistente virtual ¿en qué te ayudo?",
+                sender: "bot",
+                timestamp: new Date(),
+            };
+            setMessages([livGreeting]);
+            setHasShownProactive(true);
+        }
+    }, [isOpen, hasShownProactive, messages.length]);
 
     useEffect(() => {
         const handleOpenChat = () => setIsOpen(true);
@@ -411,9 +440,36 @@ export default function Chatbot() {
             <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => setIsOpen(!isOpen)}
-                className="group flex h-14 w-14 items-center justify-center rounded-full bg-indigo-600 text-white shadow-lg shadow-indigo-600/20 transition-colors hover:bg-indigo-500"
+                onClick={() => {
+                    setIsOpen(!isOpen);
+                    if (!isOpen) {
+                        setShowNotificationBadge(false);
+                    }
+                }}
+                className="group relative flex h-14 w-14 items-center justify-center rounded-full bg-indigo-600 text-white shadow-lg shadow-indigo-600/20 transition-colors hover:bg-indigo-500"
             >
+                {/* Chat Bubble Notification */}
+                {showNotificationBadge && !isOpen && (
+                    <motion.div
+                        initial={{ opacity: 0, x: 20, scale: 0.8 }}
+                        animate={{ opacity: 1, x: 0, scale: 1 }}
+                        exit={{ opacity: 0, x: 20, scale: 0.8 }}
+                        className="absolute right-16 bottom-0 w-64 pointer-events-none"
+                    >
+                        <motion.div
+                            animate={{ y: [0, -4, 0] }}
+                            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                            className="relative bg-slate-900 border border-slate-700 rounded-2xl rounded-br-none px-4 py-3 shadow-xl"
+                        >
+                            <p className="text-sm text-slate-200">
+                                👋 Hola soy Liv, tu asistente virtual ¿en qué te ayudo?
+                            </p>
+                            <div className="absolute -right-2 bottom-0 w-0 h-0 border-l-8 border-l-slate-900 border-t-8 border-t-transparent border-b-8 border-b-transparent" />
+                            <div className="absolute -right-[9px] bottom-[1px] w-0 h-0 border-l-8 border-l-slate-700 border-t-8 border-t-transparent border-b-8 border-b-transparent" />
+                        </motion.div>
+                    </motion.div>
+                )}
+
                 <AnimatePresence mode="wait">
                     {isOpen ? (
                         <motion.div

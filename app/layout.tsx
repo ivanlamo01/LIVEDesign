@@ -6,6 +6,7 @@ import Footer from "./components/Footer";
 import Chatbot from "./components/Chatbot";
 import GoogleAnalytics from "./components/GoogleAnalytics";
 import JsonLd from "./components/JsonLd";
+import { AuthProvider } from "./context/AuthContext";
 
 const spaceMono = Space_Mono({
   weight: ['400', '700'],
@@ -16,7 +17,7 @@ const spaceMono = Space_Mono({
 export const metadata: Metadata = {
   title: "LIVE Design | Agencia de Desarrollo & IA",
   description: "Transformamos negocios mediante desarrollo web, automatización e inteligencia artificial. Expertos en Next.js, n8n y soluciones a medida.",
-  keywords: ["Desarrollo Web", "Inteligencia Artificial", "Automatización", "n8n", "Next.js", "Agencia Software", "Argentina","ia","programacion","Paginas Web","chatbot"],
+  keywords: ["Desarrollo Web", "Inteligencia Artificial", "Automatización", "n8n", "Next.js", "Agencia Software", "Argentina", "ia", "programacion", "Paginas Web", "chatbot"],
   openGraph: {
     title: "LIVE Design | Agencia de Desarrollo & IA",
     description: "Transformamos negocios mediante desarrollo web, automatización e inteligencia artificial.",
@@ -60,12 +61,14 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={`${spaceMono.className} antialiased bg-slate-950 text-slate-50`}>
-        <GoogleAnalytics />
-        <JsonLd />
-        <Navbar />
-        {children}
-        <Chatbot />
-        <Footer />
+        <AuthProvider>
+          <GoogleAnalytics />
+          <JsonLd />
+          <Navbar />
+          {children}
+          <Chatbot />
+          <Footer />
+        </AuthProvider>
       </body>
     </html>
   );

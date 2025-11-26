@@ -4,10 +4,14 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import { useAuth } from "../context/AuthContext";
+import { LogOut, User, ChevronDown } from "lucide-react";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { user, logOut } = useAuth();
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -26,7 +30,7 @@ export default function Navbar() {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ type: "spring", stiffness: 100, damping: 20 }}
-        className={`fixed top-0 left-0 z-1000 w-full transition-all duration-700 overflow-hidden ${scrolled || open
+        className={`fixed top-0 left-0 z-1000 w-full transition-all duration-700 ${scrolled || open
           ? "backdrop-blur-xl bg-black/30"
           : "bg-transparent backdrop-blur-none"
           }`}
@@ -77,6 +81,7 @@ export default function Navbar() {
               { href: "/", label: "Inicio" },
               { href: "/services", label: "Servicios" },
               { href: "/portfolio", label: "Portafolio" },
+              { href: "/blog", label: "Blog" },
             ].map((link) => (
               <Link
                 key={link.label}
@@ -102,8 +107,70 @@ export default function Navbar() {
             transition={{ delay: 0.3, type: "spring", stiffness: 120 }}
             className="flex items-center gap-3"
           >
+            {/* Auth Section */}
+            {!open && (
+              <div className="hidden md:block relative ">
+                {user ? (
+                  <div className="relative">
+                    <button
+                      onClick={() => setUserMenuOpen(!userMenuOpen)}
+                      className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-300 hover:text-white transition-colors rounded-full hover:bg-white/5"
+                    >
+                      <User className="w-4 h-4" />
+
+                      <ChevronDown className={`w-4 h-4 transition-transform ${userMenuOpen ? 'rotate-180' : ''}`} />
+                    </button>
+
+                    <AnimatePresence>
+                      {userMenuOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                          transition={{ duration: 0.2 }}
+                          className="z-999 absolute right-0 mt-2 w-48 py-2 bg-slate-900/90 backdrop-blur-xl border border-slate-800 rounded-xl shadow-xl z-50"
+                        >
+                          <div className="px-4 py-2 border-b border-slate-800 mb-2">
+                            <p className="text-xs text-slate-500">Conectado como</p>
+                            <p className="text-sm text-slate-300 truncate">{user.email}</p>
+                          </div>
+
+                          <Link
+                            href="/profile"
+                            className="flex items-center gap-2 px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-white/5 transition-colors"
+                            onClick={() => setUserMenuOpen(false)}
+                          >
+                            <User className="w-4 h-4" />
+                            Mi Perfil
+                          </Link>
+
+                          <button
+                            onClick={() => {
+                              logOut();
+                              setUserMenuOpen(false);
+                            }}
+                            className="cursor-pointer w-full flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors"
+                          >
+                            <LogOut className="w-4 h-4" />
+                            Cerrar Sesión
+                          </button>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                ) : (
+                  <Link
+                    href="/login"
+                    className="px-5 py-2 text-sm font-medium text-white bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 rounded-full transition-all hover:scale-105 active:scale-95"
+                  >
+                    Iniciar Sesión
+                  </Link>
+                )}
+              </div>
+            )}
+
             {!open ? (
-              
+
               <motion.a
                 onClick={() => window.dispatchEvent(new Event('start-contact-flow'))}
                 whileHover={{ scale: 1.05 }}
@@ -350,6 +417,43 @@ export default function Navbar() {
                     </Link>
                   </motion.li>
                 ))}
+
+                {/* Mobile Auth Links */}
+                {user ? (
+                  <>
+                    <motion.li
+                      variants={{
+                        hidden: { opacity: 0, x: -30, scale: 0.8 },
+                        visible: { opacity: 1, x: 0, scale: 1 }
+                      }}
+                    >
+                      <Link href="/admin" onClick={closeMenu} className="text-slate-300 hover:text-white">
+                        Admin de Usuario
+                      </Link>
+                    </motion.li>
+                    <motion.li
+                      variants={{
+                        hidden: { opacity: 0, x: -30, scale: 0.8 },
+                        visible: { opacity: 1, x: 0, scale: 1 }
+                      }}
+                    >
+                      <button onClick={() => { logOut(); closeMenu(); }} className="text-red-400 hover:text-red-300">
+                        Cerrar Sesión
+                      </button>
+                    </motion.li>
+                  </>
+                ) : (
+                  <motion.li
+                    variants={{
+                      hidden: { opacity: 0, x: -30, scale: 0.8 },
+                      visible: { opacity: 1, x: 0, scale: 1 }
+                    }}
+                  >
+                    <Link href="/login" onClick={closeMenu} className="text-blue-400 hover:text-blue-300">
+                      Iniciar Sesión
+                    </Link>
+                  </motion.li>
+                )}
               </motion.ul>
 
               {/* CTA grande en el overlay */}
