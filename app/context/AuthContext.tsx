@@ -53,20 +53,65 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }, []);
 
     const signIn = async (email: string, password: string) => {
-        await signInWithEmailAndPassword(auth, email, password);
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+
+        // Obtener el token y crear la sesión cookie
+        const idToken = await userCredential.user.getIdToken();
+        const response = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ idToken }),
+        });
+
+        if (!response.ok) {
+            const data = await response.json();
+            throw new Error(data.details || data.error || 'Error al iniciar sesión en el servidor');
+        }
     };
 
     const signUp = async (email: string, password: string) => {
-        await createUserWithEmailAndPassword(auth, email, password);
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+
+        // Obtener el token y crear la sesión cookie
+        const idToken = await userCredential.user.getIdToken();
+        const response = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ idToken }),
+        });
+
+        if (!response.ok) {
+            const data = await response.json();
+            throw new Error(data.details || data.error || 'Error al crear sesión en el servidor');
+        }
     };
 
     const logOut = async () => {
+        // Revocar la sesión cookie primero
+        await fetch('/api/auth/logout', {
+            method: 'POST',
+        });
+
+        // Luego cerrar sesión en Firebase
         await signOut(auth);
     };
 
     const signInWithGoogle = async () => {
         const provider = new GoogleAuthProvider();
-        await signInWithPopup(auth, provider);
+        const userCredential = await signInWithPopup(auth, provider);
+
+        // Obtener el token y crear la sesión cookie
+        const idToken = await userCredential.user.getIdToken();
+        const response = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ idToken }),
+        });
+
+        if (!response.ok) {
+            const data = await response.json();
+            throw new Error(data.details || data.error || 'Error al iniciar sesión con Google en el servidor');
+        }
     };
 
     const updateUserProfile = async (displayName: string, photoURL?: string) => {

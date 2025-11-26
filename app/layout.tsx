@@ -7,6 +7,7 @@ import Chatbot from "./components/Chatbot";
 import GoogleAnalytics from "./components/GoogleAnalytics";
 import JsonLd from "./components/JsonLd";
 import { AuthProvider } from "./context/AuthContext";
+import CookieConsent from "./components/CookieConsent";
 
 const spaceMono = Space_Mono({
   weight: ['400', '700'],
@@ -66,6 +67,7 @@ export default function RootLayout({
           <JsonLd />
           <Navbar />
           {children}
+          <CookieConsent />
           <Chatbot />
           <Footer />
         </AuthProvider>
