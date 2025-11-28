@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
     onAuthStateChanged,
     User,
@@ -14,7 +15,7 @@ import {
     EmailAuthProvider,
     reauthenticateWithCredential,
 } from "firebase/auth";
-import { auth } from "../lib/firebase";
+import { getClientAuth } from "../lib/firebase";
 
 interface AuthContextType {
     user: User | null;
@@ -36,8 +37,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
     const [isAdmin, setIsAdmin] = useState(false);
+    const router = useRouter();
 
     useEffect(() => {
+        const auth = getClientAuth();
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
             setUser(user);
             if (user) {
@@ -53,6 +56,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }, []);
 
     const signIn = async (email: string, password: string) => {
+        const auth = getClientAuth();
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
 
         // Obtener el token y crear la sesión cookie
@@ -67,9 +71,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             const data = await response.json();
             throw new Error(data.details || data.error || 'Error al iniciar sesión en el servidor');
         }
+
+        router.refresh();
     };
 
     const signUp = async (email: string, password: string) => {
+        const auth = getClientAuth();
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 
         // Obtener el token y crear la sesión cookie
@@ -84,20 +91,30 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             const data = await response.json();
             throw new Error(data.details || data.error || 'Error al crear sesión en el servidor');
         }
+
+        router.refresh();
     };
 
     const logOut = async () => {
-        // Revocar la sesión cookie primero
-        await fetch('/api/auth/logout', {
-            method: 'POST',
-        });
+        try {
+            // Revocar la sesión cookie primero
+            await fetch('/api/auth/logout', {
+                method: 'POST',
+            });
 
-        // Luego cerrar sesión en Firebase
-        await signOut(auth);
+            // Luego cerrar sesión en Firebase
+            const auth = getClientAuth();
+            await signOut(auth);
+
+            router.refresh();
+        } catch (error) {
+            console.error("Error al cerrar sesión:", error);
+        }
     };
 
     const signInWithGoogle = async () => {
         const provider = new GoogleAuthProvider();
+        const auth = getClientAuth();
         const userCredential = await signInWithPopup(auth, provider);
 
         // Obtener el token y crear la sesión cookie
@@ -112,6 +129,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             const data = await response.json();
             throw new Error(data.details || data.error || 'Error al iniciar sesión con Google en el servidor');
         }
+
+        router.refresh();
     };
 
     const updateUserProfile = async (displayName: string, photoURL?: string) => {

@@ -30,9 +30,6 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
-.env.local
 
 # vercel
 .vercel
@@ -42,8 +39,15 @@ yarn-error.log*
 next-env.d.ts
 
 # firebase
-ServiceAccountKey.json
+
 .firebase
 
 
 .github
+
+.env
+.env.local
+.env.production
+.ServiceAccountKey.json
+ServiceAccountKey.json
+

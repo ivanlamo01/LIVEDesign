@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/app/lib/firebaseAdmin';
 import { cookies } from 'next/headers';
+import { getAdminAuth } from '@/app/lib/firebaseAdmin';
 
 // Force Node.js runtime for Firebase Admin compatibility
 export const runtime = 'nodejs';
@@ -19,6 +19,7 @@ export async function POST(request: NextRequest) {
 
         // Verificar y revocar la sesión
         try {
+            const auth = getAdminAuth();
             const decodedClaims = await auth.verifySessionCookie(sessionCookie);
             await auth.revokeRefreshTokens(decodedClaims.uid);
         } catch (error) {

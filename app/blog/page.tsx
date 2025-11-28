@@ -4,7 +4,8 @@ import Link from "next/link";
 import { Calendar, Clock, ArrowRight, Tag, Plus, Edit2, Trash2, Save, X, Upload, Image as ImageIcon } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
-import { db, storage } from "../lib/firebase";
+import { getClientDb, getClientStorage } from "../lib/firebase";
+import { updateBlogPost } from "../lib/actions";
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, orderBy, Timestamp } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { motion, AnimatePresence } from "framer-motion";
@@ -39,6 +40,7 @@ export default function BlogPage() {
 
     const fetchPosts = async () => {
         try {
+            const db = getClientDb();
             const q = query(collection(db, "blog_posts"), orderBy("createdAt", "desc"));
             const querySnapshot = await getDocs(q);
             const fetchedPosts: BlogPost[] = [];
@@ -71,6 +73,7 @@ export default function BlogPage() {
         };
 
         try {
+            const db = getClientDb();
             const docRef = await addDoc(collection(db, "blog_posts"), newPost);
             setPosts([{ id: docRef.id, ...newPost }, ...posts]);
             startEdit({ id: docRef.id, ...newPost });
@@ -82,6 +85,7 @@ export default function BlogPage() {
     const handleDelete = async (id: string) => {
         if (!confirm("¿Estás seguro de eliminar este post?")) return;
         try {
+            const db = getClientDb();
             await deleteDoc(doc(db, "blog_posts", id));
             setPosts(posts.filter(p => p.id !== id));
         } catch (error) {
@@ -102,12 +106,20 @@ export default function BlogPage() {
     const saveEdit = async () => {
         if (!editingId || !editForm) return;
         try {
-            await updateDoc(doc(db, "blog_posts", editingId), editForm);
-            setPosts(posts.map(p => p.id === editingId ? { ...p, ...editForm } : p));
-            setEditingId(null);
-            setEditForm({});
+            // Use server action instead of client-side update
+            const result = await updateBlogPost(editingId, editForm);
+
+            if (result.success) {
+                setPosts(posts.map(p => p.id === editingId ? { ...p, ...editForm } : p));
+                setEditingId(null);
+                setEditForm({});
+            } else {
+                console.error("Error updating post:", result.error);
+                alert("Error al guardar el post");
+            }
         } catch (error) {
             console.error("Error updating post:", error);
+            alert("Error al guardar el post");
         }
     };
 
@@ -118,6 +130,7 @@ export default function BlogPage() {
         setUploading(true);
 
         try {
+            const storage = getClientStorage();
             const storageRef = ref(storage, `blog_images/${Date.now()}_${file.name}`);
             await uploadBytes(storageRef, file);
             const downloadURL = await getDownloadURL(storageRef);

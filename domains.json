@@ -1,0 +1,49 @@
+{"users": [
+{
+  "localId": "mPZZilYyZXdLWaexHZXRfubNA0j1",
+  "email": "test_debug@example.com",
+  "emailVerified": false,
+  "passwordHash": "5qpZ4HTGeaWEDZ973aP68o8iPBBF/ytCfP0bUio16YSSAHXaRBFd3T6wOWwb0y9S6rPEg2/xjBJGWLZvgM6N5A==",
+  "salt": "GURKwVeykP9iNQ==",
+  "lastSignedInAt": "1764158200972",
+  "createdAt": "1764158200972",
+  "providerUserInfo": []
+},
+{
+  "localId": "qCnhj0Zaf6PxgcqIGZs3nlYdgV32",
+  "email": "ivanlamonega001@gmail.com",
+  "emailVerified": true,
+  "displayName": "Ivan Lamonega",
+  "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocLCF-bsq50xHt7WVEd90jCgqXtmzHT0LbDJs2bJNS66NHPclA=s96-c",
+  "lastSignedInAt": "1764172384030",
+  "createdAt": "1764098371201",
+  "customAttributes": "{\"admin\":true}",
+  "providerUserInfo": [
+    {
+      "providerId": "google.com",
+      "rawId": "116389161790812343622",
+      "email": "ivanlamonega001@gmail.com",
+      "displayName": "Ivan Lamonega",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocLCF-bsq50xHt7WVEd90jCgqXtmzHT0LbDJs2bJNS66NHPclA=s96-c"
+    }
+  ]
+},
+{
+  "localId": "uLdt0WpibUMWFjt1yNAtF7qSiD43",
+  "email": "varelaenzoo@gmail.com",
+  "emailVerified": true,
+  "displayName": "Enzoo Varela",
+  "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIxWsA2Df7Tw7IQT9h7gqZHmCxlhZPyklWecLRWwOjDG0LT5Hnjfw=s96-c",
+  "lastSignedInAt": "1764169976195",
+  "createdAt": "1764154587780",
+  "customAttributes": "{\"admin\":true}",
+  "providerUserInfo": [
+    {
+      "providerId": "google.com",
+      "rawId": "109752929027549658018",
+      "email": "varelaenzoo@gmail.com",
+      "displayName": "Enzoo Varela",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIxWsA2Df7Tw7IQT9h7gqZHmCxlhZPyklWecLRWwOjDG0LT5Hnjfw=s96-c"
+    }
+  ]
+}]}

@@ -10,7 +10,7 @@ export default function JsonLd() {
             "addressLocality": "La Plata",
             "addressCountry": "AR"
         },
-        "url": "https://livedesign.app",
+        "url": "https://livedesignweb.com",
         "telephone": "+542216087519",
         "priceRange": "$$",
         "openingHoursSpecification": [

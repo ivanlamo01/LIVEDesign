@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useRouter } from "next/navigation";
 import { User, Save, Lock, Upload, Camera, X } from "lucide-react";
-import { storage } from "../lib/firebase";
+import { getClientStorage } from "../lib/firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 export default function ProfilePage() {
@@ -27,9 +27,11 @@ export default function ProfilePage() {
     const [passwordError, setPasswordError] = useState("");
 
     useEffect(() => {
-        if (!loading && !user) {
-            router.push("/login");
-        }
+        console.log("Profile Page - Auth State:", { loading, user: user?.email, uid: user?.uid });
+        // if (!loading && !user) {
+        //     console.log("Redirecting to login...");
+        //     router.push("/login");
+        // }
         if (user) {
             setDisplayName(user.displayName || "");
             setPhotoURL(user.photoURL || "");
@@ -49,6 +51,7 @@ export default function ProfilePage() {
         setProfileError("");
 
         try {
+            const storage = getClientStorage();
             const storageRef = ref(storage, `profile_photos/${user.uid}_${Date.now()}`);
             await uploadBytes(storageRef, file);
             const downloadURL = await getDownloadURL(storageRef);
@@ -130,6 +133,14 @@ export default function ProfilePage() {
                 <div className="mb-8">
                     <h1 className="text-4xl font-bold text-white mb-2">Mi Perfil</h1>
                     <p className="text-slate-400">Administra tu información personal y configuración</p>
+
+                    {/* DEBUG OVERLAY */}
+                    <div className="mt-4 p-4 bg-yellow-900/50 border border-yellow-500/50 rounded text-xs font-mono text-yellow-200">
+                        <p>DEBUG INFO:</p>
+                        <p>Loading: {loading ? 'true' : 'false'}</p>
+                        <p>User: {user ? user.email : 'null'}</p>
+                        <p>UID: {user ? user.uid : 'null'}</p>
+                    </div>
                 </div>
 
                 {/* Profile Photo & Info */}

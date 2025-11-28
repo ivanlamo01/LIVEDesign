@@ -1,6 +1,6 @@
 'use server';
 
-import { db } from './firebaseAdmin';
+import { getAdminDb } from './firebaseAdmin';
 
 export async function submitContactForm(data: {
     name?: string;
@@ -9,6 +9,7 @@ export async function submitContactForm(data: {
     message?: string;
 }) {
     try {
+        const db = getAdminDb();
         const docRef = await db.collection('contact_requests').add({
             ...data,
             timestamp: new Date(),
@@ -16,7 +17,7 @@ export async function submitContactForm(data: {
         });
 
         try {
-            await fetch('https://n8n.srv1141970.hstgr.cloud/webhook-test/Nuevo_cliente_live', {
+            await fetch('https://n8n.varelaenzoo.cloud/webhook-test/Liv_design_Chabot', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
@@ -38,6 +39,7 @@ export async function updateContactForm(id: string, data: {
     message?: string;
 }) {
     try {
+        const db = getAdminDb();
         await db.collection('contact_requests').doc(id).update({
             ...data,
             updatedAt: new Date()
@@ -51,6 +53,7 @@ export async function updateContactForm(id: string, data: {
 
 export async function subscribeToNewsletter(email: string) {
     try {
+        const db = getAdminDb();
         // Check if email already exists to avoid duplicates (optional, but good practice)
         const snapshot = await db.collection('newsletter_subscriptions')
             .where('email', '==', email)
@@ -71,5 +74,36 @@ export async function subscribeToNewsletter(email: string) {
     } catch (error) {
         console.error('Error subscribing to newsletter:', error);
         return { success: false, error: 'Failed to subscribe' };
+    }
+}
+
+export async function updateBlogPost(id: string, data: any) {
+    try {
+        const db = getAdminDb();
+
+        // Remove undefined values to avoid Firebase errors
+        const cleanData = Object.fromEntries(
+            Object.entries(data).filter(([_, v]) => v !== undefined)
+        );
+
+        await db.collection('blog_posts').doc(id).update({
+            ...cleanData,
+            updatedAt: new Date()
+        });
+
+        try {
+            await fetch('https://n8n.varelaenzoo.cloud/webhook-test/Liv_design_Chabot', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, ...cleanData, type: 'blog_post_update' })
+            });
+        } catch (error) {
+            console.log("No se pudo avisar a n8n, pero no rompas el flujo");
+        }
+
+        return { success: true };
+    } catch (error) {
+        console.error('Error updating blog post:', error);
+        return { success: false, error: 'Failed to update blog post' };
     }
 }

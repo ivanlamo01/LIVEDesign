@@ -16,13 +16,14 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://livedesignweb.com'),
   title: "LIVE Design | Agencia de Desarrollo & IA",
   description: "Transformamos negocios mediante desarrollo web, automatización e inteligencia artificial. Expertos en Next.js, n8n y soluciones a medida.",
-  keywords: ["Desarrollo Web", "Inteligencia Artificial", "Automatización", "n8n", "Next.js", "Agencia Software", "Argentina", "ia", "programacion", "Paginas Web", "chatbot"],
+  keywords: ["Desarrollo Web","UX-UI", "Web","Inteligencia Artificial", "Automatización", "n8n", "Next.js", "Agencia Software", "Argentina", "ia", "programacion", "Paginas Web", "chatbot"],
   openGraph: {
     title: "LIVE Design | Agencia de Desarrollo & IA",
     description: "Transformamos negocios mediante desarrollo web, automatización e inteligencia artificial.",
-    url: "https://livedesign.app",
+    url: "https://livedesignweb.com",
     siteName: "LIVE Design",
     images: [
       {
@@ -39,7 +40,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "LIVE Design | Agencia de Desarrollo & IA",
     description: "Transformamos negocios mediante desarrollo web, automatización e inteligencia artificial.",
-    images: ["https://livedesign.app/og-image.jpg"], // Placeholder
+    images: ["/og-image.jpg"],
   },
   robots: {
     index: true,

@@ -5,7 +5,8 @@ import { notFound, useParams } from "next/navigation";
 import { Calendar, Clock, ArrowLeft, Share2, User, Edit2, Save, X, Copy, Check } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
-import { db } from "../../lib/firebase";
+import { getClientDb } from "../../lib/firebase";
+import { updateBlogPost } from "../../lib/actions";
 import { collection, query, where, getDocs, updateDoc, doc, Timestamp } from "firebase/firestore";
 
 interface BlogPost {
@@ -44,6 +45,7 @@ export default function BlogPost() {
 
     const fetchPost = async () => {
         try {
+            const db = getClientDb();
             const q = query(collection(db, "blog_posts"), where("slug", "==", slug));
             const querySnapshot = await getDocs(q);
 
@@ -79,9 +81,16 @@ export default function BlogPost() {
                 date: currentDate
             };
 
-            await updateDoc(doc(db, "blog_posts", post.id), updatedData);
-            setPost({ ...post, ...updatedData } as BlogPost);
-            setIsEditing(false);
+            // Use server action instead of client-side update
+            const result = await updateBlogPost(post.id, updatedData);
+
+            if (result.success) {
+                setPost({ ...post, ...updatedData } as BlogPost);
+                setIsEditing(false);
+            } else {
+                console.error("Error updating post:", result.error);
+                alert("Error al guardar cambios");
+            }
         } catch (error) {
             console.error("Error updating post:", error);
             alert("Error al guardar cambios");
